@@ -304,7 +304,7 @@ def toggle_theme_button_clicked():
 # Check for newer versions of the program
 def update():
     try:
-        request = requests.get("https://raw.githubusercontent.com/WorldOfBasti/CustomRichPresence/latest_version.txt")
+        request = requests.get("https://raw.githubusercontent.com/WorldOfBasti/CustomRichPresence/master/latest_version.txt")
         if not version.parse(installed_version) >= version.parse(request):
             should_download = messagebox.askyesno(app_resource_manager.get_string("update_available"), app_resource_manager.get_string("would_you_like_to_update"))
             if should_download:
