@@ -2,11 +2,9 @@
 
 CustomRichPresence is a tool which helps you to customize your Rich Presence on Discord. It is build with Python and is availbale for Windows and macOS. <br>
 If you are on macOS, you can also sync your Rich Presence with Apple Music. <br>
-![](images/mac.png)
-![](images/windows.png)
+![](images/program.png)
 <br>
-![](images/apple_music.png)
-![](images/custom_rich_presence.png)
+![](images/rich_presence.png)
 <br>
 Two languages are currently supported:
 - English
