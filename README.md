@@ -1,7 +1,8 @@
 # CustomRichPresence
 
-CustomRichPresence is a tool which helps you to customize your Rich Presence on Discord. It is build with Python and is availbale for Windows and macOS. <br>
-If you are on macOS, you can also sync your Rich Presence with Apple Music. <br>
+CustomRichPresence is a tool which helps you to customize your Rich Presence on Discord. It is built with Python and is available for Windows and macOS. <br>
+If you are on macOS, you can also sync your Rich Presence with Apple Music. 
+<br>
 ![](images/program.png)
 <br>
 ![](images/rich_presence.png)
@@ -14,8 +15,8 @@ Two languages are currently supported:
 
 ### Installation
 You can watch [this Tutorial](https://youtu.be/BJbhq8fH0rc) or follow these steps:
-- First [create a new application](https://discord.com/developers/applications) on the discord developer page. (The name is also the name of your Rich Presence. You can change it at any time.)
-- Download the program [from the release page](https://github.com/WorldOfBasti/CustomRichPresence/releases) and run it.
+- First, [create a new application](https://discord.com/developers/applications) on the discord developer page. (The name is also the name of your Rich Presence. You can change it at any time.)
+- Download the program [of the release page](https://github.com/WorldOfBasti/CustomRichPresence/releases) and run it.
 - Copy your Application ID from the developer page and paste it in the Client ID entry.
 - Now you can customize your Rich Presence as you wish.
 
@@ -26,7 +27,7 @@ If you want to change your Rich Presence Title, click the "Edit title" Button an
 Currently, you need to restart CustomRichPresence after that.
 
 ### Adding Buttons
-You can add two buttons to your Rich Presence. To do that, you need to write the text of a button in one of the text entrys, then you need to add a link to the link entry. (You can't click your own buttons, they will only work for other users.)
+You can add two buttons to your Rich Presence. To do that, you need to write the text of a button in one of the text entries, then you need to add a link to the link entry. (You can't click your own buttons, they will only work for other users.)
 
 ### Adding Images
 If you want to add an image to your Rich Presence, you can click the "Manage images" Button and add them. It may take a while until Discord processed the images to their servers. <br>
@@ -53,4 +54,4 @@ Without these modules/etc. it wouldn't have been possible to create this project
 - And all other modules have I used
 
 ## Want to support this project?
-The best way to support this project is to create issues and sending pull requests. Alternatively you can translate the program to [other languages](src/Resources). 
+The best way to support this project is to create issues and sending pull requests. Alternatively, you can translate the program to [other languages](src/Resources). 
