@@ -20,7 +20,7 @@ if platform.system() == "Darwin":
     from Foundation import NSRunLoop
 
 
-installed_version = "1.0.0"
+installed_version = "1.0.1"
 app_resource_manager = AppResourceManager()
 old_client_id = ""
 client_id = ""
@@ -36,9 +36,14 @@ rpc = Presence("")
 use_apple_music = False
 run_thread = False
 
+settings_path = ""
+
 # Paths which we need for Windows to access the files
-if platform.system() == "Windows":
-    settings_path = os.path.join(os.environ.get("APPDATA"), "CustomRichPresence")
+if platform.system() != "Darwin":
+    if platform.system() == "Windows":
+        settings_path = os.path.join(os.environ.get("APPDATA"), "CustomRichPresence")
+    else:
+        settings_path = os.path.join(Path.home(), ".customrichpresence")
 
     if getattr(sys, 'frozen', False):
         base_dir = sys._MEIPASS
@@ -96,7 +101,7 @@ def on_song_detected(_details, _state, _song_duration):
 
 # Start apple music query in a loop
 def apple_music_loop():
-    gs = AppleMusicHandler(command=on_song_detected)
+    AppleMusicHandler(command=on_song_detected)
     while True:
         loop = NSRunLoop.currentRunLoop()
         loop.run()
@@ -108,7 +113,7 @@ def apple_music_loop():
 def sync_with_apple_music():
     global apple_music_var, run_thread, details, state, client_id, old_client_id, connected, rpc
 
-    # Skip on Windows
+    # Skip if it's not macOS
     if platform.system() != "Darwin":
         display_message(app_resource_manager.get_string("apple_music_only_macos"))
         apple_music_var.set(value=0)
@@ -236,9 +241,9 @@ def update_rp():
         # Update presence (with or without buttons)
         try:
             if buttons_information[0] and len(buttons_list) > 0:
-                rpc.update(details=details, state=state, large_image=image_name, start=time.time(), buttons=buttons_list)
+                rpc.update(details=details, state=state, large_image=image_name, start=int(time.time()), buttons=buttons_list)
             else:
-                rpc.update(details=details, state=state, large_image=image_name, start=time.time())
+                rpc.update(details=details, state=state, large_image=image_name, start=int(time.time()))
         except:
             display_message(app_resource_manager.get_string("could_not_update"))
 
@@ -267,6 +272,8 @@ def toggle_theme_button_clicked():
         tertiary_color = "#3f3f3f"
         if platform.system() == "Windows":
             img_url = os.path.join(base_dir, "files\\theme_dark.png")
+        elif platform.system() == "Linux":
+            img_url = os.path.join(base_dir, "files/theme_dark.png")
         else:
             img_url = "files/theme_dark.png"
     else:
@@ -277,6 +284,8 @@ def toggle_theme_button_clicked():
         tertiary_color = "#989898"
         if platform.system() == "Windows":
             img_url = os.path.join(base_dir, "files\\theme_light.png")
+        elif platform.system() == "Linux":
+            img_url = os.path.join(base_dir, "files/theme_light.png")
         else:
             img_url = "files/theme_light.png"
 
@@ -291,12 +300,13 @@ def toggle_theme_button_clicked():
         if type(slave) is Label:
             slave.config(bg=primary_color, fg=secondary_color)
         elif type(slave) is Entry:
-            slave.config(bg=primary_color, fg=secondary_color, highlightbackground=secondary_color, insertbackground=secondary_color, disabledbackground=secondary_color)
+            slave.config(bg=primary_color, fg=secondary_color, highlightbackground=secondary_color, insertbackground=secondary_color, disabledbackground=secondary_color, highlightcolor=tertiary_color if platform.system() == "Linux" else None)
         elif type(slave) is TkinterCustomButton:
             slave.configure_color(bg_color=primary_color, fg_color=quaternary_color if use_apple_music else secondary_color, text_color=primary_color, hover_color=tertiary_color)
 
     apple_music_checkbox.config(activebackground=primary_color, activeforeground=secondary_color)
-    img = ImageTk.PhotoImage(Image.open(img_url).resize((50, 50)))
+    with Image.open(img_url) as image:
+        img = ImageTk.PhotoImage(image.resize((50, 50)))
     toggle_theme_button.config(image=img, bg=primary_color)
     toggle_theme_button.image = img
 
@@ -304,7 +314,7 @@ def toggle_theme_button_clicked():
 # Check for newer versions of the program
 def update():
     try:
-        request = requests.get("https://raw.githubusercontent.com/WorldOfBasti/CustomRichPresence/master/latest_version.txt")
+        request = str(requests.get("https://raw.githubusercontent.com/WorldOfBasti/CustomRichPresence/master/latest_version.txt"))
         if not version.parse(installed_version) >= version.parse(request):
             should_download = messagebox.askyesno(app_resource_manager.get_string("update_available"), app_resource_manager.get_string("would_you_like_to_update"))
             if should_download:
@@ -320,11 +330,13 @@ def on_close():
     try:
         run_thread = False
         data = [str(clientId_sv.get()), is_dark]
-        if platform.system() == "Windows":
+        if platform.system() != "Darwin":
             Path(settings_path).mkdir(parents=True, exist_ok=True)
-            pickle.dump(data, open(os.path.join(settings_path, "settings.dat"), "wb"))
+            with open(os.path.join(settings_path, "settings.dat"), "wb") as f:
+                pickle.dump(data, f)
         else:
-            pickle.dump(data, open("files/settings.dat", "wb"))
+            with open("files/settings.dat", "wb") as f:
+                pickle.dump(data, f)
     except:
         pass
     finally:
@@ -337,16 +349,23 @@ root.title("CustomRichPresence")
 root.geometry("475x675")
 root.resizable(0, 0)
 if platform.system() == "Windows":
-    root.iconbitmap(os.path.join(base_dir, "files/icon_windows.ico"))
+    root.iconbitmap(os.path.join(base_dir, "files\\icon_windows.ico"))
+elif platform.system() == "Linux":
+    root.wm_iconphoto(True, PhotoImage(file=os.path.join(base_dir, "files/icon_linux.png")))
 root.bind("<Return>", lambda event: update_rp() if not use_apple_music else None)
-menu = Menu(root)
-root.config(menu=menu)
+if platform.system() == "Darwin":
+    menu = Menu(root)
+    root.config(menu=menu)
 
 
 # Default values (platform specific)
 if platform.system() == "Windows":
     label_width = 27
     entry_width = 30
+    button_width = 190
+elif platform.system() == "Linux":
+    label_width = 23
+    entry_width = 23
     button_width = 190
 else:
     label_width = 20
@@ -356,7 +375,7 @@ else:
 
 # Apple music
 apple_music_var = IntVar()
-apple_music_checkbox = Checkbutton(root, text=app_resource_manager.get_string("sync_with_apple_music"), variable=apple_music_var, onvalue=True, offvalue=False, command=sync_with_apple_music)
+apple_music_checkbox = Checkbutton(root, text=app_resource_manager.get_string("sync_with_apple_music"), highlightthickness=0, variable=apple_music_var, onvalue=True, offvalue=False, command=sync_with_apple_music)
 apple_music_checkbox.pack(pady=(0, 15))
 
 # ClientId
@@ -445,10 +464,12 @@ my_label.place(relx=0.5, rely=0.975, anchor=CENTER)
 
 # Load settings
 try:
-    if platform.system() == "Windows":
-        data = pickle.load(open(os.path.join(settings_path, "settings.dat"), "rb"))
+    if platform.system() != "Darwin":
+        with open(os.path.join(settings_path, "settings.dat"), "rb") as f:
+            data = pickle.load(f)
     else:
-        data = pickle.load(open("files/settings.dat", "rb"))
+        with open("files/settings.dat", "rb") as f:
+            data = pickle.load(f)
     clientId_entry.insert(0, data[0])
     is_dark = not data[1]
 except FileNotFoundError or TypeError:

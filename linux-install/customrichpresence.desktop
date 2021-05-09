@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=CustomRichPresence
+Exec=CustomRichPresence
+Icon=CustomRichPresence
+Terminal=false
+Type=Application

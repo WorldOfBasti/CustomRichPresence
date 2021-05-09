@@ -2,7 +2,7 @@ from .en import en
 from .de import de
 import platform
 if platform.system() == "Darwin":
-    import Foundation
+    from Foundation import NSLocale
 else:
     import locale
 
@@ -11,7 +11,7 @@ class AppResourceManager(object):
     # Save language code
     def __init__(self):
         if platform.system() == "Darwin":
-            self.current_language = list(Foundation.NSLocale.preferredLanguages())[0][:-3].lower()
+            self.current_language = list(NSLocale.preferredLanguages())[0][:-3].lower()
         else:
             self.current_language = locale.getdefaultlocale()[0][:-3].lower()
 

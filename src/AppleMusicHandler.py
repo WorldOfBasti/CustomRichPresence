@@ -1,5 +1,5 @@
 from Resources.AppResourceManager import AppResourceManager
-import Foundation
+from Foundation import NSDistributedNotificationCenter
 
 
 # Thanks to this post:
@@ -10,7 +10,7 @@ class AppleMusicHandler(object):
     def __init__(self, command):
         self.command = command
         self.app_resource_manager = AppResourceManager()
-        nc = Foundation.NSDistributedNotificationCenter.defaultCenter()
+        nc = NSDistributedNotificationCenter.defaultCenter()
         nc.addObserver_selector_name_object_(self, 'get_current_song:', 'com.apple.Music.playerInfo', None)
 
     def get_current_song_(self, song):

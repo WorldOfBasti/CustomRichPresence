@@ -173,7 +173,7 @@ class TkinterCustomButton(tkinter.Frame):
                                                                  self.height - self.inner_corner_radius - self.border_width))
 
         for part in self.canvas_fg_parts:
-            self.canvas.itemconfig(part, fill=self.fg_color, outline=self.fg_color) # width=0 macht Render Probleme
+            self.canvas.itemconfig(part, fill=self.fg_color, outline=self.fg_color)  # width=0 causes some render issues
 
         for part in self.canvas_border_parts:
             self.canvas.itemconfig(part, fill=self.border_color, outline=self.border_color, width=0)
