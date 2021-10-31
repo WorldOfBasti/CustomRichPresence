@@ -7,7 +7,8 @@ APP = ["CustomRichPresence.py"]
 DATA_FILES = [("", ["files"])]
 OPTIONS = {
     "iconfile": "files/icon_mac.icns",
-    "argv_emulation": False
+    "argv_emulation": False,
+    "packages": ["pystray"]
 }
 
 setup(

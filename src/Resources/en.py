@@ -21,8 +21,12 @@ en = {
     "could_not_connect_to_discord": "Could not connect to Discord. Please check if Discord is running and try again.",
     "invalid_first_link": "The link at the first button is invalid.",
     "invalid_second_link": "The link at the second button is invalid.",
-    "could_not_update": "Could not update rich presence. Please check if all information has been entered correctly and try again.",
+    "could_not_update": "Could not update rich presence. Please check if all information have been entered correctly and try again.",
     "update_available": "Update available",
     "would_you_like_to_update": "A new version is available. Would you like to download it?",
-    "apple_music_only_macos": "Sync with Apple Music is currently only available on macOS."
+    "apple_music_only_macos": "Sync with Apple Music is currently only available on macOS.",
+    "enable_minimized_mode": "Enable minimized mode",
+    "open_program": "Open",
+    "stop_program": "Exit",
+    "minimized_not_linux": "Minimized mode is currently not available on Linux"
 }

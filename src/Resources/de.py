@@ -24,5 +24,9 @@ de = {
     "could_not_update": "Rich Presence konnte nicht aktualisiert werden. Überprüfe ob alle informationen korrekt angegeben wurden und ob Discord ausgeführt ist.",
     "update_available": "Update verfügbar",
     "would_you_like_to_update": "Eine neue Version ist verfübar. Möchtest du sie herunterladen?",
-    "apple_music_only_macos": "Mit Apple Music synchronisieren ist aktuell nur auf macOS verfügbar."
+    "apple_music_only_macos": "Mit Apple Music synchronisieren ist aktuell nur auf macOS verfügbar.",
+    "enable_minimized_mode": "Minimierten Modus aktivieren",
+    "open_program": "Öffnen",
+    "stop_program": "Beenden",
+    "minimized_not_linux": "Der minimierte Modus ist aktuell nicht auf Linux verfügbar"
 }

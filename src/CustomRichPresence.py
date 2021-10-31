@@ -15,12 +15,15 @@ import pickle
 import os
 import sys
 import platform
+if platform.system() != "Linux":
+    import pystray
 if platform.system() == "Darwin":
     from AppleMusicHandler import AppleMusicHandler
     from Foundation import NSRunLoop
+    from Cocoa import NSApp
 
 
-installed_version = "1.0.1"
+installed_version = "1.1.0"
 app_resource_manager = AppResourceManager()
 old_client_id = ""
 client_id = ""
@@ -35,6 +38,8 @@ is_dark = True
 rpc = Presence("")
 use_apple_music = False
 run_thread = False
+tray = None
+
 
 settings_path = ""
 
@@ -72,7 +77,7 @@ def toggle_apple_music():
         for slave in root.pack_slaves():
             if type(slave) is Entry:
                 slave.config(state=NORMAL, highlightbackground=secondary_color)
-            elif type(slave) is TkinterCustomButton:
+            elif type(slave) is TkinterCustomButton and slave is not enable_tray_button:
                 slave.configure_color(None, secondary_color, None, primary_color)
 
         title_button.configure_command(command=edit_title)
@@ -84,7 +89,7 @@ def toggle_apple_music():
         for slave in root.pack_slaves():
             if type(slave) is Entry:
                 slave.config(state=DISABLED, highlightbackground=secondary_color)
-            elif type(slave) is TkinterCustomButton:
+            elif type(slave) is TkinterCustomButton and slave is not enable_tray_button:
                 slave.configure_command(command=None)
                 slave.configure_color(None, tertiary_color, None, primary_color)
 
@@ -141,6 +146,46 @@ def sync_with_apple_music():
     toggle_apple_music()
 
 # -- End apple music -- #
+
+
+# Minimized mode was enabled
+def enable_minimized_mode():
+    global tray
+
+    # Not available for Linux
+    if platform.system() == "Linux":
+        display_message(app_resource_manager.get_string("minimized_not_linux"))
+        return
+
+    # Hide window and dock icon
+    if platform.system() == "Darwin":
+        NSApp.setActivationPolicy_(1)
+    root.withdraw()
+
+    # Show and run tray icon
+    if platform.system() == "Darwin":
+        tray_icon = Image.open("files/tray_icon.png")
+    else:
+        tray_icon = Image.open(os.path.join(base_dir, "files\\tray_icon.png"))
+    tray_menu = pystray.Menu(pystray.MenuItem(app_resource_manager.get_string("open_program"), disable_minimized_mode, default=True), pystray.MenuItem(app_resource_manager.get_string("stop_program"), on_close))
+    tray = pystray.Icon("CustomRichPresence", tray_icon, "CustomRichPresence", tray_menu)
+    tray.run()
+
+
+# Minimized mode was disabled
+def disable_minimized_mode():
+    # Not available for Linux
+    if platform.system() == "Linux":
+        return
+
+    # Hide tray icon
+    if tray:
+        tray.stop()
+
+    # Show window and dock icon
+    if platform.system() == "Darwin":
+        NSApp.setActivationPolicy_(0)
+    root.deiconify()
 
 
 # Open page to manage the title
@@ -340,13 +385,16 @@ def on_close():
     except:
         pass
     finally:
-        root.destroy()
+        os._exit(0)
 
 
 # Tkinter window
+window_width = 475
+window_height = 700 if platform.system() == "Windows" else 725
+
 root = Tk()
 root.title("CustomRichPresence")
-root.geometry("475x675")
+root.geometry(f"{window_width}x{window_height}")
 root.resizable(0, 0)
 if platform.system() == "Windows":
     root.iconbitmap(os.path.join(base_dir, "files\\icon_windows.ico"))
@@ -451,6 +499,10 @@ image_entry.pack(pady=(0, 20))
 # Update presence
 update_button = TkinterCustomButton(text=app_resource_manager.get_string("update_rich_presence"), command=update_rp, height=35, width=250, corner_radius=0 if platform.system() == "Windows" else 10)
 update_button.pack(pady=(0, 10))
+
+# Enable minimized mode
+enable_tray_button = TkinterCustomButton(text=app_resource_manager.get_string("enable_minimized_mode"), command=enable_minimized_mode, height=35, width=250, corner_radius=0 if platform.system() == "Windows" else 10)
+enable_tray_button.pack(pady=(0, 15))
 
 # DarkMode Switch
 toggle_theme_button = Label(root, height=50, width=50)
